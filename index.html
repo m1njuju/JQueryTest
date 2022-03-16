@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>넌센스퀴즈</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: lightcyan;
+            text-align: center;
+        }
+        #start:visited, #start:link {
+            text-decoration: none;
+            color: burlywood;
+        }
+        #start:hover {
+            text-decoration: none;
+            color: cornflowerblue;
+        } 
+        #log {
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>넌센스 Quiz 맞히기</h1>
+    <p>3문제 - 중복있음</p>
+    <p id="timer"></p>
+    <h3><a href="" id="start">시작</a></h3>
+
+    <!-- 문제 부분 -->
+    <h3 id="quiz"></h3>
+    <form id="form" style="display: none;">
+        <input type="text" placeholder="답을 입력해 주세요">
+    </form>
+    <p id="score"></p>
+    <script>
+        let x;
+        let score = 0;
+        let count = 0;
+        const quizArray = [
+            {quiz:"오리가 얼면?", answer:"언덕"},
+            {quiz:"왕이 넘어지면?", answer:"킹콩"},
+            {quiz:"아몬드가 죽으면?", answer:"다이아몬드"},
+            {quiz:"해가 우는 곳은?", answer:"해운대"},
+            {quiz:"반성문을 영어로?", answer:"글로벌"},
+        ]
+        //시작 버튼 눌렀을 때 입력창 나타나기
+        $("#start").on("click",function(e){
+            e.preventDefault();
+            $("#form").hide().slideDown();
+            $("#form").children().first().focus();
+            $("#start").text("시작");
+            $("#score").text("");
+            timeStart();
+            quizStart();
+        });
+
+        //submit 했을 때 input value 비교하기
+        $("#form").on("submit",function(e){
+            e.preventDefault();
+            const answer = quizArray[randomNum].answer;
+            const $user = $("#form").children().first().val();
+            count++;
+            if($user == answer) {
+                score++;
+                $("#score").text(`3문제 중에서 ${score}개 맞혔습니다!`);
+            }
+            else if($user != answer) {
+                $("#score").text(`3문제 중에서 ${score}개 맞혔습니다!`);
+            }
+            quizStart();
+            $("#form").children().first().val("");
+
+            if(count==3){
+                $("#form").hide();
+                $("#quiz").text("");
+                if(score == 0) {
+                    $("#score").html("전부 틀렸습니다&#128549;");
+                }
+                timeStop();
+                $("#start").text("재시작");
+                count = 0;
+                score = 0;
+                
+                
+            }
+        });
+        
+        function quizStart() {
+            randomNum = Math.floor(Math.random()*quizArray.length);
+            $("#quiz").text(quizArray[randomNum].quiz);
+        }
+
+        
+        function timeStart() {
+            let sec = 30;
+            x = setInterval(function () {
+                $("#timer").text(`제한 시간 : ${sec}초`);
+                sec--;
+                if(sec < 0) {
+                    clearInterval(x);
+                    $("#timer").text("시간초과");
+                    $("#form").hide();
+                    $("#quiz").text("");
+                    $("#start").text("재시작");
+                }
+            },1000);
+        }
+        
+        function timeStop() {
+            clearInterval(x);
+        }
+        
+    </script>
+</body>
+</html>
